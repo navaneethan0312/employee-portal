@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '========== Stage 1: Checkout from GitHub =========='
-                git branch: 'main',
+                git branch: 'master',
                     url: 'https://github.com/navaneethan0312/employee-portal.git'
             }
         }
