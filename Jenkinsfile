@@ -13,7 +13,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'mster',
+                git branch: 'master',
                     url: 'https://github.com/navaneethan0312/employee-portal.git'
             }
         }
