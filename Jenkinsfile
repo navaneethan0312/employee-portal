@@ -4,7 +4,7 @@ pipeline {
     environment {
         NODE_HOME  = "/home/navaneethan/.nvm/versions/node/v20.20.2/bin"
         PATH       = "${NODE_HOME}:${PATH}"
-        EC2_HOST   = "65.2.171.107"
+        EC2_HOST   = "13.206.221.80"
         EC2_USER   = "ubuntu"
         DEPLOY_DIR = "/home/ubuntu/employee-portal"
     }
@@ -29,6 +29,7 @@ pipeline {
 
         stage('Build Backend') {
             steps {
+                echo '========== Stage 3: Build Backend =========='
                 dir('backend') {
                     sh 'npm install'
                 }
@@ -37,6 +38,7 @@ pipeline {
 
         stage('Test') {
             steps {
+                echo '========== Stage 4: Run Tests =========='
                 dir('backend') {
                     sh 'npm test'
                 }
@@ -45,13 +47,22 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
+                echo '========== Stage 5: Deploy to EC2 =========='
                 sshagent(['ec2-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no \
                             -o ServerAliveInterval=60 \
                             -o ServerAliveCountMax=10 \
-                            ubuntu@65.2.171.107 bash -s << 'ENDSSH'
+                            ubuntu@13.206.221.80 bash -s << 'ENDSSH'
                         set -e
+
+                        export NVM_DIR="$HOME/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                        export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node)/bin:$PATH"
+
+                        echo "Node version: $(node -v)"
+                        echo "NPM version: $(npm -v)"
+                        echo "PM2 version: $(pm2 -v)"
 
                         echo "--- Step 1: Pull latest code ---"
                         if [ -d "/home/ubuntu/employee-portal/.git" ]; then
@@ -106,14 +117,18 @@ ENDSSH
         }
     }
 
-    post {
+    post {                    
         success {
+            echo '============================================'
             echo 'Pipeline SUCCESS!'
-            echo 'Frontend : http://65.2.171.107'
-            echo 'Backend  : http://65.2.171.107/api'
+            echo 'Frontend : http://13.206.221.80'
+            echo 'Backend  : http://13.206.221.80/api'
+            echo '============================================'
         }
         failure {
+            echo '============================================'
             echo 'Pipeline FAILED! Check logs above.'
+            echo '============================================'
         }
     }
 }
