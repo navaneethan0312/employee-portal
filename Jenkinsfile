@@ -55,7 +55,7 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no \
                             -o ServerAliveInterval=60 \
                             -o ServerAliveCountMax=10 \
-                            ubuntu@65.2.171.107 bash -s << 'ENDSSH'
+                            ubuntu@13.206.221.80 bash -s << 'ENDSSH'
                         set -e
 
                         echo "Node version: $(node -v)"
