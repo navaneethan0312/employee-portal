@@ -101,7 +101,10 @@ pipeline {
 
                         echo "--- Step 6: Restart backend with PM2 ---"
                         pm2 delete employee-backend 2>/dev/null || true
-                        pm2 start /home/ubuntu/employee-portal/backend/server.js --name employee-backend
+                        pm2 start /home/ubuntu/employee-portal/backend/server.js \
+                        --name employee-backend \
+                        --cwd /home/ubuntu/employee-portal/backend
+                       
                         pm2 save
 
                         echo "--- Step 7: Reload Nginx ---"
@@ -120,8 +123,8 @@ ENDSSH
         success {
             echo '============================================'
             echo 'Pipeline SUCCESS!'
-            echo 'Frontend : http://65.2.171.107'
-            echo 'Backend  : http://65.2.171.107/api'
+            echo 'Frontend : http://13.206.221.80'
+            echo 'Backend  : http://13.206.221.80/api'
             echo '============================================'
         }
         failure {
