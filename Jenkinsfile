@@ -1,3 +1,4 @@
+cat > ~/employee-portal/Jenkinsfile << 'JEOF'
 pipeline {
     agent any
 
@@ -13,6 +14,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                echo '========== Stage 1: Checkout =========='
                 git branch: 'master',
                     url: 'https://github.com/navaneethan0312/employee-portal.git'
             }
@@ -20,6 +22,7 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
+                echo '========== Stage 2: Build Frontend =========='
                 dir('frontend') {
                     sh 'npm install'
                     sh 'npm run build'
@@ -53,12 +56,8 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no \
                             -o ServerAliveInterval=60 \
                             -o ServerAliveCountMax=10 \
-                            ubuntu@13.206.221.80 bash -s << 'ENDSSH'
+                            ubuntu@65.2.171.107 bash -s << 'ENDSSH'
                         set -e
-
-                        export NVM_DIR="$HOME/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                        export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node)/bin:$PATH"
 
                         echo "Node version: $(node -v)"
                         echo "NPM version: $(npm -v)"
@@ -68,8 +67,9 @@ pipeline {
                         if [ -d "/home/ubuntu/employee-portal/.git" ]; then
                             echo "Git repo found - pulling latest..."
                             cd /home/ubuntu/employee-portal
-                            git fetch emp
-                            git reset --hard emp/master
+                            git remote set-url origin https://github.com/navaneethan0312/employee-portal.git
+                            git fetch origin
+                            git reset --hard origin/master
                         elif [ -d "/home/ubuntu/employee-portal" ]; then
                             echo "Folder exists but not git repo - recloning..."
                             rm -rf /home/ubuntu/employee-portal
@@ -117,12 +117,12 @@ ENDSSH
         }
     }
 
-    post {                    
+    post {
         success {
             echo '============================================'
             echo 'Pipeline SUCCESS!'
-            echo 'Frontend : http://13.206.221.80'
-            echo 'Backend  : http://13.206.221.80/api'
+            echo 'Frontend : http://65.2.171.107'
+            echo 'Backend  : http://65.2.171.107/api'
             echo '============================================'
         }
         failure {
@@ -132,3 +132,4 @@ ENDSSH
         }
     }
 }
+JEOF
