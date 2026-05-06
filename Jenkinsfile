@@ -1,4 +1,3 @@
-cat > ~/employee-portal/Jenkinsfile << 'JEOF'
 pipeline {
     agent any
 
@@ -132,4 +131,3 @@ ENDSSH
         }
     }
 }
-JEOF
